@@ -21,7 +21,7 @@ class Stack:
     def reverse(self) -> None:
         self.__xs.reverse()
 
-    def print(self):
+    def print(self) -> None:
         for item in self.__xs[::-1]:
             print(f"[{item}]")
 
@@ -49,7 +49,7 @@ def read_stacks(stacks: str) -> list[Stack]:
     return xs
 
 
-def do_move_crane9000(stacks: list[Stack], command: str):
+def do_move_crane9000(stacks: list[Stack], command: str) -> None:
     cmd = command.split()
     how_many = int(cmd[1])
     from_stack = int(cmd[3])
@@ -60,7 +60,7 @@ def do_move_crane9000(stacks: list[Stack], command: str):
         stacks[to_stack - 1].push(stack.pop())
 
 
-def do_move_crane9001(stacks: list[Stack], command: str):
+def do_move_crane9001(stacks: list[Stack], command: str) -> None:
     cmd = command.split()
     how_many = int(cmd[1])
     from_stack = int(cmd[3])
