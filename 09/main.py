@@ -7,55 +7,71 @@ class Point:
     x: int = 0
     y: int = 0
 
-    @property
-    def tpl(self) -> tuple:
-        return (self.x, self.y)
+    def __init__(self, _x: int, _y: int) -> None:
+        self.x = _x
+        self.y = _y
 
-    def update(self, tpl: tuple) -> None:
-        self.x = tpl[0]
-        self.y = tpl[1]
+    @property
+    def pos(self) -> tuple:
+        return (self.x, self.y)
 
 
 class RopeBridge:
 
     def __init__(self) -> None:
-        self.head = Point()
-        self.tail = Point()
+        self.head = Point(0,0)
+        self.tail = Point(0,0)
 
-        self.__visited = set(self.tail.tpl)
-        self.__last_pos_head = self.head.tpl
+        # set() does not work here and delivers 6123?
+        self.__visited = {self.tail.pos}
 
-    def up(self) -> None:
-        self.__last_pos_head = self.head.tpl        
+    def up(self) -> None:        
         self.head.y += 1
-        self.__move_tail()
+        self.__move_tail("up")
 
-    def down(self) -> None:
-        self.__last_pos_head = self.head.tpl        
+    def down(self) -> None:        
         self.head.y -= 1
-        self.__move_tail()
+        self.__move_tail("down")
 
     def left(self) -> None:
-        self.__last_pos_head = self.head.tpl
         self.head.x -= 1        
-        self.__move_tail()
+        self.__move_tail("left")
 
     def right(self) -> None:
-        self.__last_pos_head = self.head.tpl
         self.head.x += 1
-        self.__move_tail()
+        self.__move_tail("right")
 
     def visited(self) -> int:
         return len(self.__visited)
 
     def print(self) -> None:
-        print(f"Head: {self.head.tpl}")
-        print(f"Tail: {self.tail.tpl}")
+        print(f"Head: {self.head.pos}")
+        print(f"Tail: {self.tail.pos}")
 
-    def __move_tail(self):
+    def __move_tail(self, direction: str) -> None:
+
+        is_directional_movement = True if (self.head.x != self.tail.x) or (self.head.y != self.tail.y) else False
+
         if abs(self.head.x - self.tail.x) > 1 or abs(self.head.y - self.tail.y) > 1:
-            self.tail.update(self.__last_pos_head)
-            self.__visited.add(self.tail.tpl)
+            match direction:
+                case "up":
+                    if is_directional_movement:
+                        self.tail.x = self.head.x
+                    self.tail.y += 1
+                case "down":
+                    if is_directional_movement:
+                        self.tail.x = self.head.x
+                    self.tail.y -= 1
+                case "left":
+                    if is_directional_movement:
+                        self.tail.y = self.head.y
+                    self.tail.x -= 1
+                case "right":
+                    if is_directional_movement:
+                        self.tail.y = self.head.y
+                    self.tail.x += 1
+
+            self.__visited.add(self.tail.pos)
 
 
 def solve_part1(lines: list[str]) -> None:
@@ -68,23 +84,17 @@ def solve_part1(lines: list[str]) -> None:
         # print(f"Amount: {amount}")
         match direction:
             case 'L':
-                for _ in range(0, int(amount)):
+                for _ in range(int(amount)):
                     rb.left()
-                    rb.print()
             case 'R':
-                for _ in range(0, int(amount)):
+                for _ in range(int(amount)):
                     rb.right()
-                    rb.print()
             case 'U':
-                for _ in range(0, int(amount)):
+                for _ in range(int(amount)):
                     rb.up()
-                    rb.print()
             case 'D':
-                for _ in range(0, int(amount)):
+                for _ in range(int(amount)):
                     rb.down()
-                    rb.print()
-        print("")
-        # rb.print()
     
     print(f"Visited: {rb.visited()}")
 
@@ -95,7 +105,7 @@ def solve_part2(lines: list[str]) -> None:
 
 def main() -> int:
 
-    with open(Path(__file__).parent / "test.txt", encoding='utf-8') as f:
+    with open(Path(__file__).parent / "input.txt", encoding='utf-8') as f:
         lines = f.readlines()
 
     solve_part1(lines)
